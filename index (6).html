@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Servora – Book a plumber or electrician</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛠️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#101a23;--card:#1a2631;--line:#2a3a48;--text:#fff;--muted:#9fb0bf;--yellow:#f5b800;--green:#3ecf8e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:22px 0 0;flex-wrap:wrap;gap:12px}
+#auth{margin-left:auto;margin-right:18px;display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.logo{font-size:26px;font-weight:800;cursor:pointer}
+.logo b{background:var(--yellow);color:#111;padding:0 8px;border-radius:6px;margin-right:4px}
+nav.top{display:flex;gap:26px}
+nav.top a{color:var(--text);text-decoration:none;font-weight:500;padding-bottom:8px;border-bottom:2px solid transparent;cursor:pointer}
+nav.top a.active{border-color:var(--yellow)}
+h1{font-size:clamp(34px,6vw,56px);line-height:1.1;margin:36px 0 12px;font-weight:800;max-width:620px}
+.sub{color:var(--muted);font-size:18px;margin:0 0 22px}
+.search-wrap{display:flex;gap:10px;margin:0 0 28px;flex-wrap:wrap}
+.search,.area,input,select,textarea{background:var(--card);border:1px solid var(--line);color:#fff;padding:14px 16px;border-radius:12px;font:inherit;font-size:16px;width:100%}
+.search{flex:1;min-width:220px;width:auto}.area{width:auto}
+input:focus,select:focus,textarea:focus,.search:focus,.area:focus{outline:2px solid var(--yellow)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:15px}
+.service-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;cursor:pointer;transition:transform .15s,border-color .15s}
+.service-card:hover{transform:translateY(-4px);border-color:var(--yellow)}
+.service-card .ic{font-size:34px}.service-card h3{margin:10px 0 2px;font-size:18px}
+.service-card p{margin:0;color:var(--muted);font-size:15px}
+.trust{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0;color:var(--muted)}
+.trust div{background:var(--card);padding:10px 16px;border-radius:999px;font-size:14px}
+.how h2,.page h2{margin:0 0 16px;font-size:26px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.step span{background:var(--yellow);color:#111;font-weight:700;width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.step h3{margin:12px 0 4px}.step p{color:var(--muted);margin:0}
+.footer{margin:60px 0 100px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);text-align:center;font-size:14px}
+.view{display:none}.view.on{display:block}
+.back{background:none;border:0;color:var(--yellow);font:inherit;cursor:pointer;margin:28px 0 8px;padding:0}
+.worker{display:flex;gap:16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;flex-wrap:wrap}
+.avatar{width:56px;height:56px;border-radius:50%;background:var(--yellow);color:#111;font-weight:800;font-size:22px;display:flex;align-items:center;justify-content:center;flex:none}
+.winfo{flex:1;min-width:180px}.winfo h3{margin:0;font-size:18px}
+.winfo small{color:var(--muted)}.tick{color:var(--green);font-size:14px;margin-left:6px}
+.price{font-weight:700;margin-right:8px}
+.btn{background:var(--yellow);color:#111;border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}.btn.sm{padding:8px 14px;font-size:14px}.btn.ghost{background:transparent;color:#fff;border:1px solid var(--line)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal.on{display:flex}
+.box{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:24px;width:100%;max-width:440px;max-height:92vh;overflow:auto}
+.box h3{margin:0 0 4px;font-size:22px}.box label{display:block;margin:14px 0 6px;color:var(--muted);font-size:14px}
+.row{display:flex;gap:10px;margin-top:20px}.row .btn{flex:1}
+.booking{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px}
+.booking .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.status{background:#3a3000;color:var(--yellow);padding:2px 12px;border-radius:999px;font-size:13px;height:fit-content}
+.empty{color:var(--muted);background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:30px;text-align:center}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--green);color:#0b2;color:#06301c;font-weight:700;padding:12px 22px;border-radius:999px;display:none;z-index:200}
+.toast.on{display:block}
+.chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:4px 12px;margin:0 6px 6px 0;font-size:13px;color:var(--muted);cursor:pointer}
+.chip.on{background:var(--yellow);color:#111;border-color:var(--yellow)}
+.rrow{display:flex;justify-content:space-between;align-items:center;margin-top:6px;color:var(--muted);font-size:14px}
+.star{font-size:28px;cursor:pointer;color:var(--yellow);margin-right:4px;user-select:none}
+.fb{color:var(--muted);font-size:13px;font-style:italic;margin-top:4px}
+.status.bad{background:#3a1010;color:#ff8a8a}.status.ok{background:#0e3322;color:var(--green)}
+.rate{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.bottom-nav{display:none}
+@media(max-width:700px){
+  nav.top{display:none}
+  .bottom-nav{display:flex;justify-content:space-around;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);padding:10px 0;z-index:50}
+  .bottom-nav a{color:var(--muted);display:flex;flex-direction:column;align-items:center;font-size:12px;cursor:pointer}
+  .bottom-nav a.active{color:var(--yellow)}
+  .bottom-nav a i{font-style:normal;font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" onclick="go('home')"><b>Serv</b>ora</div>
+    <div id="auth"></div>
+    <nav class="top">
+      <a data-v="home" class="active" onclick="go('home')">Services</a>
+      <a data-v="bookings" onclick="go('bookings')">My bookings</a>
+      <a data-v="join" onclick="go('join')">For workers</a>
+    </nav>
+  </header>
+
+  <!-- HOME -->
+  <main id="home" class="view on">
+    <h1>Book a pro for any home fix</h1>
+    <p class="sub">Pick a service, choose a verified worker, and book a time.</p>
+    <div class="search-wrap">
+      <input id="search" class="search" placeholder="What do you need fixed? e.g. leaking tap">
+      <input id="city" class="area" list="cities" placeholder="Your city" style="width:170px">
+      <datalist id="cities"><option>Bengaluru<option>Mumbai<option>Delhi<option>Hyderabad<option>Chennai<option>Kolkata<option>Pune<option>Ahmedabad<option>Jaipur<option>Lucknow<option>Kochi<option>Chandigarh<option>Indore<option>Bhopal<option>Patna<option>Nagpur<option>Coimbatore<option>Mysuru<option>Visakhapatnam<option>Surat<option>Guwahati<option>Bhubaneswar<option>Thiruvananthapuram<option>Mangaluru</datalist>
+      <button class="btn ghost" onclick="useLoc()">📍 Use my location</button>
+    </div>
+    <div class="grid" id="services"></div>
+    <section class="trust">
+      <div>✔ Verified workers</div><div>⭐ Rated by customers</div><div>💵 Pay after the job</div>
+    </section>
+    <section class="how">
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step"><span>1</span><h3>Pick a service</h3><p>Choose what you need fixed.</p></div>
+        <div class="step"><span>2</span><h3>Choose a worker</h3><p>Compare ratings and prices.</p></div>
+        <div class="step"><span>3</span><h3>Book a time</h3><p>Select a slot and confirm.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- WORKERS LIST -->
+  <main id="workers" class="view page">
+    <button class="back" onclick="go('home')">← Back to services</button>
+    <h2 id="wTitle"></h2>
+    <div id="wList"></div>
+  </main>
+
+  <!-- BOOKINGS -->
+  <main id="bookings" class="view page">
+    <h2 style="margin-top:36px">My bookings</h2>
+    <div id="bList"></div>
+  </main>
+
+  <!-- JOIN -->
+  <main id="join" class="view page">
+    <h2 style="margin-top:36px">Join Servora as a worker</h2>
+    <div id="joinOut" class="empty">
+      <p>Sign in with Google to create your worker profile.</p>
+      <button class="btn" onclick="signIn()">Sign in with Google</button>
+    </div>
+    <div id="joinIn" style="display:none;max-width:440px">
+      <label>Gmail</label><input id="jEmail" disabled>
+      <label>Full name</label><input id="jName">
+      <label>Mobile number</label><input id="jPhone" type="tel" placeholder="10-digit mobile number">
+      <label>Service</label><select id="jService"></select>
+      <label>State</label><select id="jState"></select>
+      <label>City</label><input id="jCity" placeholder="e.g. Bengaluru">
+      <label>Area</label><input id="jArea" placeholder="e.g. Koramangala">
+      <div class="row"><button class="btn ghost" onclick="jLoc()">📍 Use my location for my profile</button></div>
+      <label>Price per visit (₹)</label><input id="jPrice" type="number">
+      <label>Experience (years)</label><input id="jExp" type="number">
+      <div class="row"><button class="btn" onclick="joinSave()">Save profile</button></div>
+    </div>
+    <h2 style="margin-top:40px;display:none" id="reqH">Booking requests for you</h2>
+    <div id="reqList"></div>
+  </main>
+
+  <div class="footer"><strong>Servora</strong> · About · Contact · Become a worker · <a href="privacy.html" style="color:inherit">Privacy policy</a><br>© 2026 Servora</div>
+</div>
+
+<!-- BOOKING MODAL -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Book <span id="mWorker"></span></h3>
+    <small style="color:var(--muted)" id="mService"></small>
+    <label>Date</label><input type="date" id="mDate">
+    <label>Time slot</label>
+    <select id="mSlot"><option>Morning (9–12)</option><option>Afternoon (12–4)</option><option>Evening (4–8)</option></select>
+    <label>Your phone</label><input id="mPhone" type="tel" placeholder="10-digit mobile number">
+    <label>Address</label><textarea id="mAddr" rows="2"></textarea>
+    <label>What needs fixing?</label><input id="mNote" placeholder="e.g. kitchen tap leaking">
+    <div class="row"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="confirmB()">Confirm booking</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav class="bottom-nav">
+  <a data-v="home" class="active" onclick="go('home')"><i>🏠</i>Home</a>
+  <a data-v="bookings" onclick="go('bookings')"><i>📋</i>Bookings</a>
+  <a data-v="join" onclick="go('join')"><i>🛠️</i>For workers</a>
+</nav>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,collection,query,where,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyAfkkczvxxxbyIN8zyyIpr-Q64XEBA5Cqc",
+  authDomain:"servora-booking.firebaseapp.com",
+  projectId:"servora-booking",
+  storageBucket:"servora-booking.firebasestorage.app",
+  messagingSenderId:"122240319441",
+  appId:"1:122240319441:web:051f34ce3263c966d46af0"
+};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const esc=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const SERVICES=[
+ {n:'Plumber',i:'🚰',p:199},{n:'Electrician',i:'💡',p:199},{n:'Carpenter',i:'🪚',p:249},
+ {n:'AC repair',i:'❄️',p:399},{n:'Home cleaning',i:'🧹',p:499},{n:'Painter',i:'🎨',p:299},
+ {n:'Appliance repair',i:'🔌',p:299},{n:'Pest control',i:'🐜',p:599}];
+
+let user=null,current=null,list=[],pick=null;
+
+/* ---------- auth ---------- */
+async function signIn(){
+  try{await signInWithPopup(auth,new GoogleAuthProvider())}
+  catch(e){console.error(e);toast('Sign-in failed: '+(e.code||e.message),true)}
+}
+async function signOutUser(){await signOut(auth);go('home')}
+onAuthStateChanged(auth,async u=>{
+  user=u;
+  $('auth').innerHTML=u?`<span>${esc(u.displayName||u.email)}</span><button class="btn ghost sm" onclick="signOutUser()">Sign out</button>`
+    :`<button class="btn sm" onclick="signIn()">Sign in with Google</button>`;
+  await refreshJoin();
+  if($('bookings').classList.contains('on'))renderBookings();
+});
+
+/* ---------- navigation ---------- */
+function go(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===v));
+  document.querySelectorAll('[data-v]').forEach(a=>a.classList.toggle('active',a.dataset.v===v));
+  if(v==='bookings')renderBookings();
+  if(v==='join')refreshJoin();
+  window.scrollTo(0,0);
+}
+
+/* ---------- location ---------- */
+let me={city:'',lat:null,lng:null},all=[],showAll=false,myLoc={lat:null,lng:null};
+try{me={...me,...JSON.parse(localStorage.getItem('loc'))}}catch(e){}
+const saveMe=()=>{try{localStorage.setItem('loc',JSON.stringify(me))}catch(e){}};
+const STATES=['Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh','Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka','Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram','Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana','Tripura','Uttar Pradesh','Uttarakhand','West Bengal','Andaman and Nicobar Islands','Chandigarh','Dadra and Nagar Haveli and Daman and Diu','Delhi','Jammu and Kashmir','Ladakh','Lakshadweep','Puducherry'];
+const km=(a,b,c,d)=>{const r=x=>x*Math.PI/180,h=Math.sin(r(c-a)/2)**2+Math.cos(r(a))*Math.cos(r(c))*Math.sin(r(d-b)/2)**2;return 12742*Math.asin(Math.sqrt(h))};
+const getPos=()=>new Promise((ok,no)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>ok(p.coords),no,{timeout:10000}):no());
+async function place(lat,lng){
+  try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&zoom=10&lat=${lat}&lon=${lng}`);
+    const a=(await r.json()).address||{};return{city:a.city||a.town||a.village||a.state_district||'',state:a.state||''}}
+  catch(e){return{city:'',state:''}}
+}
+async function useLoc(){
+  try{const c=await getPos(),p=await place(c.latitude,c.longitude);
+    me={city:p.city,lat:+c.latitude.toFixed(2),lng:+c.longitude.toFixed(2)};saveMe();
+    $('city').value=me.city;toast(p.city?'Location set: '+p.city:'Location set');renderWorkers()}
+  catch(e){toast('Allow location access, or type your city',true)}
+}
+async function jLoc(){
+  try{const c=await getPos(),p=await place(c.latitude,c.longitude);
+    myLoc={lat:+c.latitude.toFixed(2),lng:+c.longitude.toFixed(2)};
+    if(p.city)$('jCity').value=p.city;
+    if(STATES.includes(p.state))$('jState').value=p.state;
+    toast('Location added to your profile')}
+  catch(e){toast('Allow location access, or type your city',true)}
+}
+function showAllIndia(){showAll=true;renderWorkers()}
+
+/* ---------- services ---------- */
+function renderServices(q=''){
+  const l=SERVICES.filter(s=>s.n.toLowerCase().includes(q.toLowerCase()));
+  $('services').innerHTML=l.length?l.map(s=>`<div class="service-card" onclick="openService('${s.n}')"><div class="ic">${s.i}</div><h3>${s.n}</h3><p>from ₹${s.p}</p></div>`).join('')
+   :'<div class="empty">No service found. Try “plumber” or “AC”.</div>';
+}
+$('search').addEventListener('input',e=>renderServices(e.target.value));
+
+async function openService(s){
+  current=s;showAll=false;$('wTitle').textContent=s+'s near you';
+  $('wList').innerHTML='<div class="empty">Loading…</div>';go('workers');
+  try{
+    const snap=await getDocs(query(collection(db,'workers'),where('service','==',s)));
+    all=snap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){all=[];console.error(e);toast('Could not load workers: '+(e.code||e.message),true)}
+  let revs=[];
+  try{const rs=await getDocs(query(collection(db,'reviews'),where('service','==',s)));revs=rs.docs.map(d=>d.data())}catch(e){}
+  all=all.map(w=>{
+    const r=revs.filter(x=>x.workerId===w.id).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    const sum=r.reduce((t,x)=>t+x.rating,0);
+    const cv=CATS.map(([k,n])=>{const v=r.filter(x=>x.cats&&x.cats[k]).map(x=>x.cats[k]);return v.length?n+' '+(v.reduce((p,q)=>p+q,0)/v.length).toFixed(1):''}).filter(Boolean).join(' · ');
+    return{...w,cv,cnt:r.length,avg:r.length?(sum/r.length).toFixed(1):null,last:(r.find(x=>x.feedback)||{}).feedback||''};
+  });
+  renderWorkers();
+}
+function renderWorkers(){
+  if(!current)return;
+  const c=(me.city||'').trim().toLowerCase();
+  const inC=w=>!c||(w.city||'').toLowerCase().includes(c);
+  let l=all.map(w=>({...w,d:(me.lat!=null&&w.lat!=null)?km(me.lat,me.lng,w.lat,w.lng):null}));
+  const here=l.filter(inC);
+  if(c&&!showAll)l=here;
+  l.sort((x,y)=>(x.d??(inC(x)?1e6:1e7))-(y.d??(inC(y)?1e6:1e7)));
+  list=l;
+  if(!l.length){
+    $('wList').innerHTML=all.length
+     ?`<div class="empty"><p>No ${esc(current.toLowerCase())} in ${esc(me.city)} yet.</p><button class="btn" onclick="showAllIndia()">Show workers from all India</button></div>`
+     :`<div class="empty"><p>No ${esc(current.toLowerCase())} has joined yet.</p><button class="btn" onclick="go('join')">Join as a worker</button></div>`;
+    return;
+  }
+  $('wList').innerHTML=l.map((w,i)=>`
+    <div class="worker">
+      <div class="avatar">${esc(w.name[0]||'?')}</div>
+      <div class="winfo"><h3>${esc(w.name)}<span class="tick">✔ Signed up with Google</span></h3>
+        <small>${w.avg?'⭐ '+w.avg+' ('+w.cnt+')':'New'} · ${w.exp||0} yrs · ${esc(w.area)}${w.city?', '+esc(w.city):''}${w.d!=null?' · '+(w.d<1?'under 1':w.d.toFixed(1))+' km away':''}</small>${w.last?`<div class="fb">“${esc(w.last.slice(0,80))}”</div>`:''}${w.cv?`<div class="fb">${esc(w.cv)}</div>`:''}</div>
+      <div class="price">₹${w.price}</div>
+      <button class="btn" onclick="openM(${i})">Book</button>
+    </div>`).join('');
+}
+
+/* ---------- booking ---------- */
+function openM(i){
+  if(!user){toast('Sign in with Google to book');signIn();return}
+  pick=list[i];
+  if(pick.id===user.uid){toast('You cannot book yourself',true);return}
+  $('mWorker').textContent=pick.name;
+  $('mService').textContent=current+' · ₹'+pick.price+' per visit';
+  $('mDate').min=new Date().toISOString().split('T')[0];
+  $('modal').classList.add('on');
+}
+function closeM(){$('modal').classList.remove('on')}
+
+async function confirmB(){
+  const d=$('mDate').value,ph=$('mPhone').value.trim(),ad=$('mAddr').value.trim();
+  if(!d||!/^\d{10}$/.test(ph)||!ad){toast('Enter date, 10-digit phone and address',true);return}
+  try{
+    let wp='';
+    try{const p=await getDoc(doc(db,'workerPhones',pick.id));wp=p.exists()?p.data().phone:''}catch(e){}
+    await addDoc(collection(db,'bookings'),{
+      customerId:user.uid,customerName:user.displayName||user.email,customerPhone:ph,
+      workerId:pick.id,workerName:pick.name,workerPhone:wp,service:current,price:pick.price,
+      date:d,slot:$('mSlot').value,addr:ad,note:$('mNote').value,status:'Pending',createdAt:serverTimestamp()});
+    closeM();['mDate','mPhone','mAddr','mNote'].forEach(id=>$(id).value='');
+    toast('Booking sent to '+pick.name);go('bookings');
+  }catch(e){toast('Booking failed. Try again.',true)}
+}
+
+const star=n=>'★'.repeat(n)+'☆'.repeat(5-n);
+const sc=t=>t==='Cancelled'||t==='Declined'?'bad':t==='Completed'?'ok':'';
+let myB={},stars={};
+async function renderBookings(){
+  if(!user){$('bList').innerHTML='<div class="empty"><p>Sign in to see your bookings.</p><button class="btn" onclick="signIn()">Sign in with Google</button></div>';return}
+  const [bs,rs]=await Promise.all([
+    getDocs(query(collection(db,'bookings'),where('customerId','==',user.uid))).catch(e=>{console.error(e);toast('Could not load bookings: '+(e.code||e.message),true);return {docs:[],size:0}}),
+    getDocs(query(collection(db,'reviews'),where('customerId','==',user.uid))).catch(()=>({docs:[],size:0}))]);
+  const rv={};rs.docs.forEach(d=>rv[d.id]=d.data());
+  const b=bs.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>(y.createdAt?.seconds||0)-(x.createdAt?.seconds||0));
+  myB={};b.forEach(x=>myB[x.id]=x);
+  $('bList').innerHTML=b.length?b.map(x=>`
+    <div class="booking"><div class="top"><strong>${esc(x.service)} · ${esc(x.workerName)}</strong><span class="status ${sc(x.status)}">${esc(x.status)}</span></div>
+    <div style="color:var(--muted)">${esc(x.date)} · ${esc(x.slot)} · ₹${x.price}</div>
+    <div style="color:var(--muted)">${esc(x.addr)}${x.note?' · '+esc(x.note):''}</div>
+    ${x.workerPhone&&x.status!=='Cancelled'&&x.status!=='Declined'?`<a href="tel:${esc(x.workerPhone)}" style="color:var(--yellow)">Call worker: ${esc(x.workerPhone)}</a>`:''}
+    ${(x.status==='Pending'||x.status==='Confirmed')?`<div class="row"><button class="btn ghost sm" onclick="cancelB('${x.id}')">Cancel booking</button></div>`:''}
+    ${x.status==='Completed'?(rv[x.id]
+      ?`<div class="rate">${revHTML(rv[x.id])}</div>`
+      :rateForm(x.id)):''}
+    </div>`).join('')
+  :'<div class="empty">No bookings yet. Pick a service to book your first pro.</div>';
+}
+async function cancelB(id){
+  if(!confirm('Cancel this booking?'))return;
+  try{await updateDoc(doc(db,'bookings',id),{status:'Cancelled'});toast('Booking cancelled');renderBookings()}
+  catch(e){toast('Could not cancel',true)}
+}
+const CATS=[['q','Work quality'],['p','Punctuality'],['b','Behaviour'],['v','Value for money']];
+const TAGS=['On time','Clean work','Polite','Fair price','Would book again','Late','Poor finish'];
+let tagSel={};
+const revHTML=r=>`<span class="star" style="cursor:default">${star(r.rating)}</span>${(r.tags||[]).map(t=>`<span class="chip on" style="cursor:default">${esc(t)}</span>`).join('')}${r.cats?`<div class="fb">${CATS.map(([k,n])=>n+' '+(r.cats[k]||'-')+'★').join(' · ')}</div>`:''}${r.feedback?`<div class="fb">“${esc(r.feedback)}”</div>`:''}`;
+function rateForm(id){
+  stars[id]={};tagSel[id]=[];
+  return `<div class="rate"><strong>Rate this service</strong>
+  ${CATS.map(([k,n])=>`<div class="rrow"><span>${n}</span><span id="r-${id}-${k}">${[1,2,3,4,5].map(i=>`<span class="star" onclick="setStar('${id}','${k}',${i})">☆</span>`).join('')}</span></div>`).join('')}
+  <div style="margin:10px 0 4px">${TAGS.map((t,i)=>`<span class="chip" id="t-${id}-${i}" onclick="toggleTag('${id}',${i})">${t}</span>`).join('')}</div>
+  <textarea id="f-${id}" rows="2" maxlength="300" placeholder="Write your feedback (optional)"></textarea>
+  <div class="row"><button class="btn sm" onclick="submitReview('${id}')">Submit review</button></div></div>`;
+}
+function setStar(id,k,n){stars[id][k]=n;document.querySelectorAll(`#r-${id}-${k} .star`).forEach((el,i)=>el.textContent=i<n?'★':'☆')}
+function toggleTag(id,i){const t=TAGS[i],a=tagSel[id],j=a.indexOf(t);j<0?a.push(t):a.splice(j,1);$('t-'+id+'-'+i).classList.toggle('on',j<0)}
+async function submitReview(id){
+  const b=myB[id],c=stars[id]||{},fb=($('f-'+id).value||'').trim().slice(0,300);
+  if(CATS.some(([k])=>!c[k])){toast('Please rate all four items',true);return}
+  const rating=Math.round(CATS.reduce((t,[k])=>t+c[k],0)/CATS.length);
+  try{
+    await setDoc(doc(db,'reviews',id),{bookingId:id,workerId:b.workerId,customerId:user.uid,
+      customerName:user.displayName||'Customer',service:b.service,rating,cats:c,tags:tagSel[id]||[],feedback:fb,createdAt:serverTimestamp()});
+    toast('Thanks for your review!');renderBookings();
+  }catch(e){toast('Could not submit review',true)}
+}
+
+/* ---------- worker side ---------- */
+async function refreshJoin(){
+  $('joinOut').style.display=user?'none':'block';
+  $('joinIn').style.display=user?'block':'none';
+  $('reqH').style.display='none';$('reqList').innerHTML='';
+  if(!user)return;
+  $('jEmail').value=user.email;$('jName').value=user.displayName||'';
+  try{
+    const w=await getDoc(doc(db,'workers',user.uid));
+    if(w.exists()){
+      const x=w.data();$('jName').value=x.name;$('jService').value=x.service;
+      $('jArea').value=x.area;$('jState').value=x.state||'';$('jCity').value=x.city||'';myLoc={lat:x.lat??null,lng:x.lng??null};$('jPrice').value=x.price;$('jExp').value=x.exp||'';
+      const p=await getDoc(doc(db,'workerPhones',user.uid));$('jPhone').value=p.exists()?p.data().phone:'';
+      loadRequests();
+    }
+  }catch(e){}
+}
+async function joinSave(){
+  const n=$('jName').value.trim(),ph=$('jPhone').value.trim(),a=$('jArea').value.trim(),p=+$('jPrice').value;
+  if(!n||!/^\d{10}$/.test(ph)||!a||!p||!$('jState').value||!$('jCity').value.trim()){toast('Fill name, 10-digit mobile, state, city, area and price',true);return}
+  try{
+    await setDoc(doc(db,'workers',user.uid),{name:n,email:user.email,service:$('jService').value,state:$('jState').value,city:$('jCity').value.trim(),area:a,lat:myLoc.lat,lng:myLoc.lng,price:p,exp:+$('jExp').value||0});
+    await setDoc(doc(db,'workerPhones',user.uid),{phone:ph});
+    toast('Profile saved. Customers can now book you.');loadRequests();
+  }catch(e){toast('Could not save profile',true)}
+}
+async function loadRequests(){
+  const [bs,rs]=await Promise.all([
+    getDocs(query(collection(db,'bookings'),where('workerId','==',user.uid))).catch(e=>{console.error(e);toast('Could not load requests: '+(e.code||e.message),true);return {docs:[],size:0}}),
+    getDocs(query(collection(db,'reviews'),where('workerId','==',user.uid))).catch(()=>({docs:[],size:0}))]);
+  const rv={};let sum=0;rs.docs.forEach(d=>{rv[d.id]=d.data();sum+=d.data().rating});
+  const b=bs.docs.map(d=>({id:d.id,...d.data()})).sort((x,y)=>(y.createdAt?.seconds||0)-(x.createdAt?.seconds||0));
+  $('reqH').style.display='block';
+  $('reqH').textContent='Booking requests for you'+(rs.size?` · ⭐ ${(sum/rs.size).toFixed(1)} (${rs.size} reviews)`:'');
+  $('reqList').innerHTML=b.length?b.map(x=>`
+    <div class="booking"><div class="top"><strong>${esc(x.service)} · ${esc(x.customerName)}</strong><span class="status ${sc(x.status)}">${esc(x.status)}</span></div>
+    <div style="color:var(--muted)">${esc(x.date)} · ${esc(x.slot)} · ₹${x.price}</div>
+    <div style="color:var(--muted)">${esc(x.addr)}${x.note?' · '+esc(x.note):''}</div>
+    ${x.status!=='Cancelled'&&x.status!=='Declined'?`<a href="tel:${esc(x.customerPhone)}" style="color:var(--yellow)">Call customer: ${esc(x.customerPhone)}</a>`:''}
+    <div class="row" style="margin-top:12px">
+      ${x.status==='Pending'?`<button class="btn sm" onclick="setStatus('${x.id}','Confirmed')">Accept</button><button class="btn ghost sm" onclick="setStatus('${x.id}','Declined')">Decline</button>`:''}
+      ${x.status==='Confirmed'?`<button class="btn sm" onclick="setStatus('${x.id}','Completed')">Mark completed</button>`:''}
+    </div>
+    ${rv[x.id]?`<div class="rate">${revHTML(rv[x.id])}</div>`:''}</div>`).join('')
+  :'<div class="empty">No requests yet. They will show here when a customer books you.</div>';
+}
+async function setStatus(id,st){
+  try{await updateDoc(doc(db,'bookings',id),{status:st});loadRequests()}catch(e){toast('Could not update',true)}
+}
+
+function toast(msg,err){
+  const t=$('toast');t.textContent=msg;t.style.background=err?'#ff6b6b':'';t.style.color=err?'#fff':'';
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2800);
+}
+
+$('jService').innerHTML=SERVICES.map(s=>`<option>${s.n}</option>`).join('');
+$('jState').innerHTML='<option value="">Select state</option>'+STATES.map(x=>`<option>${x}</option>`).join('');
+$('city').value=me.city||'';
+$('city').addEventListener('input',e=>{me.city=e.target.value;saveMe();renderWorkers()});
+renderServices();
+Object.assign(window,{cancelB,submitReview,setStar,useLoc,jLoc,showAllIndia,go,openService,openM,closeM,confirmB,joinSave,signIn,signOutUser,setStatus});
+</script>
+</body>
+</html>
